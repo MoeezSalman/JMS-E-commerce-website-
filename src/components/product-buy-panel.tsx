@@ -41,7 +41,7 @@ export function ProductBuyPanel({ product }: { product: PublicProduct }) {
   return (
     <div className="space-y-4">
       {!soldOut && (
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <span className="text-sm font-medium text-muted-foreground">Quantity</span>
           <div className="flex items-center gap-1 rounded-full border border-border bg-card/60 p-1">
             <button

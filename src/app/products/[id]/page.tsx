@@ -60,7 +60,7 @@ export default async function ProductDetailPage({
         <span className="truncate font-medium text-foreground">{product.name}</span>
       </nav>
 
-      <div className="grid gap-10 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
         <ProductGallery
           images={product.images}
           video={product.video}
@@ -76,12 +76,12 @@ export default async function ProductDetailPage({
               {product.category.name}
             </Link>
           )}
-          <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+          <h1 className="mt-3 break-words text-2xl font-black tracking-tight sm:text-3xl lg:text-4xl">
             {product.name}
           </h1>
 
-          <div className="mt-4 flex items-center gap-3">
-            <span className="text-3xl font-black text-primary">
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <span className="text-2xl font-black text-primary sm:text-3xl">
               {formatPrice(product.price)}
             </span>
             {soldOut ? (
@@ -99,7 +99,7 @@ export default async function ProductDetailPage({
             )}
           </div>
 
-          <p className="mt-6 whitespace-pre-line leading-relaxed text-muted-foreground">
+          <p className="mt-6 whitespace-pre-line break-words leading-relaxed text-muted-foreground">
             {product.description}
           </p>
 

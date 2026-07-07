@@ -8,7 +8,6 @@ import {
   Menu,
   X,
   LogOut,
-  LayoutDashboard,
   User as UserIcon,
   Package,
 } from "lucide-react";
@@ -29,6 +28,7 @@ const NAV_LINKS = [
 
 export function Navbar({ user }: { user: SessionUser | null }) {
   const pathname = usePathname();
+  const isLanding = pathname === "/";
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const items = useCart((s) => s.items);
@@ -74,34 +74,25 @@ export function Navbar({ user }: { user: SessionUser | null }) {
               {l.label}
             </Link>
           ))}
-          {user?.role === "admin" && (
-            <Link
-              href="/admin"
-              className={cn(
-                "flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors hover:text-primary",
-                pathname.startsWith("/admin") ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              <LayoutDashboard className="h-4 w-4" /> Admin
-            </Link>
-          )}
         </nav>
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
 
-          <Link
-            href="/cart"
-            aria-label="Cart"
-            className="relative grid h-10 w-10 place-items-center rounded-full border border-border bg-card/60 transition-all hover:scale-105 hover:border-primary/60"
-          >
-            <ShoppingCart className="h-5 w-5" />
-            {count > 0 && (
-              <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[11px] font-bold text-primary-foreground">
-                {count}
-              </span>
-            )}
-          </Link>
+          {!isLanding && (
+            <Link
+              href="/cart"
+              aria-label="Cart"
+              className="relative grid h-10 w-10 place-items-center rounded-full border border-border bg-card/60 transition-all hover:scale-105 hover:border-primary/60"
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {count > 0 && (
+                <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[11px] font-bold text-primary-foreground">
+                  {count}
+                </span>
+              )}
+            </Link>
+          )}
 
           {/* Desktop auth */}
           <div className="hidden items-center gap-2 md:flex">
@@ -182,15 +173,6 @@ export function Navbar({ user }: { user: SessionUser | null }) {
               {l.label}
             </Link>
           ))}
-          {user?.role === "admin" && (
-            <Link
-              href="/admin"
-              onClick={() => setOpen(false)}
-              className="block rounded-xl px-4 py-2.5 text-sm font-medium text-muted-foreground"
-            >
-              Admin Dashboard
-            </Link>
-          )}
           <div className="my-2 h-px bg-border" />
           {user ? (
             <>
