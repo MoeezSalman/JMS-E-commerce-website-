@@ -29,7 +29,9 @@ export async function saveUpload(file: File, subdir: string): Promise<string> {
   const ext = path.extname(file.name) || EXT_BY_MIME[file.type] || ".bin";
   const filename = `${Date.now()}-${randomUUID().slice(0, 8)}${ext}`;
 
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
+  // Use Vercel Blob when configured — either a read-write token, or the
+  // OIDC model (BLOB_STORE_ID + VERCEL_OIDC_TOKEN) that connected stores use.
+  if (process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID) {
     const blob = await put(`${subdir}/${filename}`, file, {
       access: "public",
       addRandomSuffix: false,
