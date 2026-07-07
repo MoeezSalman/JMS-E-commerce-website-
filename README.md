@@ -58,7 +58,7 @@
 | 3D | **React Three Fiber** + **@react-three/drei** |
 | Charts | **Recharts** |
 | State | **Zustand** (cart) · **next‑themes** (theme) |
-| Database | **Prisma 7** + **SQLite** (via `better-sqlite3` driver adapter) |
+| Database | **Prisma 7** + **PostgreSQL** · **Vercel Blob** for uploaded media |
 | Auth | Custom **JWT cookie** sessions (`jose` + `bcryptjs`) |
 | Ordering | **WhatsApp** click‑to‑chat deep links |
 
@@ -84,8 +84,9 @@ cp .env.example .env
 Then edit `.env` (at minimum set a strong `JWT_SECRET`). See [`.env.example`](.env.example) for all variables.
 
 ### 3) Set up the database
+Point `DATABASE_URL` at a Postgres database (a free [Neon](https://neon.tech) DB works great), then push the schema:
 ```bash
-npx prisma migrate deploy   # creates dev.db + tables
+npx prisma db push
 ```
 
 ### 4) Run it
@@ -131,31 +132,22 @@ src/
 
 ---
 
-## ☁️ Deployment
+## ☁️ Deployment (Vercel)
 
-JMS is a **stateful full‑stack app** — it needs a **writable database** and a place to store **uploaded media**. Two solid paths:
+JMS is built to run on **Vercel** with a **serverless Postgres** database and **Vercel Blob** for uploaded media.
 
-### Option A — Fast, keep SQLite (persistent‑disk host)
-Deploy the Node server to **Railway / Fly.io / a VPS** with a **persistent volume**, then set:
-```env
-DATABASE_URL="file:/data/jms.db"
-UPLOAD_DIR="/data/uploads"
-JWT_SECRET="<long-random-string>"
-```
-Build & start:
-```bash
-npm run build && npm run db:deploy && npm start
-```
-Uploaded files are served through the built‑in `/uploads/[...]` route from `UPLOAD_DIR`.
+1. **Import the repo** on Vercel → _New Project_ → select this GitHub repo.
+2. **Add a database:** project → **Storage** → **Create** → **Postgres (Neon)** → connect. This auto‑injects `DATABASE_URL`.
+3. **Add Blob storage:** project → **Storage** → **Create** → **Blob** → connect. This auto‑injects `BLOB_READ_WRITE_TOKEN`.
+4. **Add the remaining env vars** (Settings → Environment Variables):
+   `JWT_SECRET`, `NEXT_PUBLIC_WHATSAPP_NUMBER`, `NEXT_PUBLIC_STORE_NAME`, `NEXT_PUBLIC_CURRENCY`.
+5. **Create the tables** once (with `DATABASE_URL` pointing at the new DB):
+   ```bash
+   npx prisma db push
+   ```
+6. **Redeploy**, then open `/api/dev/seed` once to create the admin account.
 
-### Option B — Serverless (Vercel)
-Vercel's filesystem is read‑only/ephemeral, so switch the two stateful pieces to managed services:
-- **Database →** a hosted Postgres (e.g. Neon / Vercel Postgres) — change the Prisma datasource + adapter.
-- **Uploads →** an object store (e.g. Vercel Blob / Supabase Storage).
-
-Then import the repo on Vercel and add the env vars.
-
-> ℹ️ The database and uploaded files are intentionally **git‑ignored**, so each environment gets its own data.
+> ℹ️ The database and uploaded media live in managed cloud services — nothing sensitive is committed to git.
 
 ---
 

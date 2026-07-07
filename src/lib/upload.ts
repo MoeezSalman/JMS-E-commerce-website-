@@ -2,12 +2,7 @@ import "server-only";
 import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-
-// Defaults to ./public/uploads (served statically in dev). In production set
-// UPLOAD_DIR to a persistent volume path; files are served via /uploads/[...].
-const UPLOAD_ROOT = process.env.UPLOAD_DIR
-  ? path.resolve(process.env.UPLOAD_DIR)
-  : path.join(process.cwd(), "public", "uploads");
+import { put } from "@vercel/blob";
 
 const EXT_BY_MIME: Record<string, string> = {
   "image/jpeg": ".jpg",
@@ -20,14 +15,32 @@ const EXT_BY_MIME: Record<string, string> = {
   "video/quicktime": ".mov",
 };
 
-/** Persist an uploaded file under /public/uploads/<subdir> and return its public path. */
+// Local fallback dir (used only when Vercel Blob isn't configured).
+const UPLOAD_ROOT = process.env.UPLOAD_DIR
+  ? path.resolve(process.env.UPLOAD_DIR)
+  : path.join(process.cwd(), "public", "uploads");
+
+/**
+ * Persist an uploaded file and return its public URL.
+ * - Production: uploads to Vercel Blob (when BLOB_READ_WRITE_TOKEN is set).
+ * - Local dev: writes to /public/uploads and returns a /uploads/... path.
+ */
 export async function saveUpload(file: File, subdir: string): Promise<string> {
+  const ext = path.extname(file.name) || EXT_BY_MIME[file.type] || ".bin";
+  const filename = `${Date.now()}-${randomUUID().slice(0, 8)}${ext}`;
+
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    const blob = await put(`${subdir}/${filename}`, file, {
+      access: "public",
+      addRandomSuffix: false,
+      contentType: file.type || undefined,
+    });
+    return blob.url;
+  }
+
   const bytes = Buffer.from(await file.arrayBuffer());
   const dir = path.join(UPLOAD_ROOT, subdir);
   await mkdir(dir, { recursive: true });
-  const ext =
-    path.extname(file.name) || EXT_BY_MIME[file.type] || ".bin";
-  const filename = `${Date.now()}-${randomUUID().slice(0, 8)}${ext}`;
   await writeFile(path.join(dir, filename), bytes);
   return `/uploads/${subdir}/${filename}`;
 }

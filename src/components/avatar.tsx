@@ -14,7 +14,7 @@ export function Avatar({
 }) {
   const initial = (name?.trim()?.[0] ?? "U").toUpperCase();
 
-  if (src && src.startsWith("/uploads")) {
+  if (src && (src.startsWith("http") || src.startsWith("/uploads"))) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img

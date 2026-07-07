@@ -5,12 +5,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: import.meta.dirname,
   },
-  // better-sqlite3 is a native module; keep it out of the bundler.
-  serverExternalPackages: ["better-sqlite3"],
-  // Uploaded product media lives under /public/uploads and is served locally.
-  images: {
-    remotePatterns: [],
-  },
+  // Uploaded media is served from Vercel Blob (prod) or /public/uploads (local).
 };
 
 export default nextConfig;
