@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.vercel
+*.db
+*.db-journal
+public/uploads
+src/generated
+scratchpad
