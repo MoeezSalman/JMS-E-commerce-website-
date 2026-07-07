@@ -79,7 +79,7 @@ export function Navbar({ user }: { user: SessionUser | null }) {
         <div className="flex items-center gap-2">
           <ThemeToggle />
 
-          {!isLanding && (
+          {user && !isLanding && (
             <Link
               href="/cart"
               aria-label="Cart"

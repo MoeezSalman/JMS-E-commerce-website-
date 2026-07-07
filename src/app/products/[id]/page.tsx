@@ -1,7 +1,8 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight, ShieldAlert, MessageCircle } from "lucide-react";
 import { getProduct, getProducts } from "@/lib/data";
+import { getCurrentUser } from "@/lib/auth";
 import { ProductGallery } from "@/components/product-gallery";
 import { ProductBuyPanel } from "@/components/product-buy-panel";
 import { ProductCard } from "@/components/product-card";
@@ -26,6 +27,7 @@ export default async function ProductDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  if (!(await getCurrentUser())) redirect(`/login?redirect=/products/${id}`);
   const product = await getProduct(id);
   if (!product) notFound();
 

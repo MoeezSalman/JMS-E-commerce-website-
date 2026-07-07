@@ -1,7 +1,9 @@
+import { redirect } from "next/navigation";
 import { PackageSearch } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
 import { ProductFilters } from "@/components/product-filters";
 import { getCategories, getProducts } from "@/lib/data";
+import { getCurrentUser } from "@/lib/auth";
 import type { ProductSort } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +14,7 @@ export default async function ProductsPage({
 }: {
   searchParams: Promise<{ q?: string; category?: string; sort?: string }>;
 }) {
+  if (!(await getCurrentUser())) redirect("/login?redirect=/products");
   const sp = await searchParams;
   const q = sp.q ?? "";
   const category = sp.category ?? "";
