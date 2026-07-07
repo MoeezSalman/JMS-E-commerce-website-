@@ -1,0 +1,80 @@
+// JMS e-commerce schema
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         String   @default("customer") // "customer" | "admin"
+  avatar       String? // uploaded image path OR preset id like "preset:aurora"
+  theme        String   @default("system") // "light" | "dark" | "system"
+  phone        String?
+  address      String?
+  city         String?
+  createdAt    DateTime @default(now())
+  orders       Order[]
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  slug     String    @unique
+  products Product[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @default("")
+  price       Int // whole PKR rupees
+  stock       Int      @default(0)
+  images      String   @default("[]") // JSON string: array of image paths
+  video       String? // optional video path
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([categoryId])
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customerName String
+  phone        String
+  address      String
+  city         String
+  total        Int
+  status       String      @default("PLACED") // "PLACED" | "CANCELLED"
+  createdAt    DateTime    @default(now())
+  cancelledAt  DateTime?
+  items        OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String?
+  productName String
+  unitPrice   Int
+  quantity    Int
+
+  @@index([orderId])
+}
