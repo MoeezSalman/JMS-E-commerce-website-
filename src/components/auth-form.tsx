@@ -40,7 +40,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
         return;
       }
       toast.success(isRegister ? "Welcome to JMS!" : "Welcome back!");
-      const dest = data.role === "admin" ? "/admin" : redirect || "/";
+      const dest = data.role === "admin" ? "/admin" : redirect || "/products";
       router.push(dest);
       router.refresh();
     } catch {

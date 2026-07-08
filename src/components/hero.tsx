@@ -20,7 +20,7 @@ export function Hero() {
       <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 animate-float rounded-full bg-primary/25 blur-3xl" />
       <div className="pointer-events-none absolute -right-16 top-40 h-80 w-80 animate-float-slow rounded-full bg-accent/20 blur-3xl" />
 
-      <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-24">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-8 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-24">
         <div className="relative z-10">
           <motion.span
             initial={{ opacity: 0, y: 16 }}

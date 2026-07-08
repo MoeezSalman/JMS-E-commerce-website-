@@ -22,7 +22,7 @@ export function ProductGallery({
   const current = slides[active];
 
   return (
-    <div className="space-y-3">
+    <div className="min-w-0 space-y-3">
       <div className="relative aspect-square overflow-hidden rounded-3xl border border-border bg-muted">
         {!current ? (
           <div className="grid h-full w-full place-items-center bg-gradient-to-br from-primary/20 to-accent/20 text-6xl font-black text-primary/50">

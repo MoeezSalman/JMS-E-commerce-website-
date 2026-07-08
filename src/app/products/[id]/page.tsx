@@ -62,14 +62,14 @@ export default async function ProductDetailPage({
         <span className="truncate font-medium text-foreground">{product.name}</span>
       </nav>
 
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
         <ProductGallery
           images={product.images}
           video={product.video}
           name={product.name}
         />
 
-        <div>
+        <div className="min-w-0">
           {product.category && (
             <Link
               href={`/products?category=${product.category.slug}`}
